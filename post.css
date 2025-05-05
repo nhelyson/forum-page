@@ -1,0 +1,15 @@
+.input_img {
+    width: 20rem!important;
+    height: 20rem !important;
+    border-radius: 10px!important;
+    border: 2px dotted black!important;
+    background-color: white!important;
+    overflow: hidden!important;
+}
+
+.input_img img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    z-index: -1!important;
+}
