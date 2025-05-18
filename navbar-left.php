@@ -25,8 +25,11 @@
                         <path d="M15.7955 15.8111L21 21M18 10.5C18 14.6421 14.6421 18 10.5 18C6.35786 18 3 14.6421 3 10.5C3 6.35786 6.35786 3 10.5 3C14.6421 3 18 6.35786 18 10.5Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     </button>
-                    <ul class="nav mx-auto input" style="left:5rem;" id="input-search"><li class="nav-item">
-                        <input type="search" style="width: 20vw;" class="form-control bg-input border-0" id="input-search" placeholder="Rechercher..." aria-label="Rechercher"></li>
+                    <ul class="nav  mx-auto input" style="left:5rem;" id="input-search"><li class="nav-item">
+                        <input type="text" style="width: 20vw;" onkeydown="search(event)" class="form-control position-relative bg-input border-0 input-search" id="input-search" placeholder="Rechercher..."></li>
+                        <div class="reponse_content">
+
+                      </div>
                     </ul>
                     <div class="d-flex me-auto">
                     <button type="button" class="btn btn-white border text-white me-5 btn-circle btn-none" id="toggle-dark">
@@ -93,5 +96,6 @@
                      </button>
             </nav>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+ <script src="search.js"></script>
 </body>
 </html>

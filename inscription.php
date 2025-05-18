@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $date_de_naissance = trim($_POST['date_de_naissance'] ?? '');
     $password = $_POST['password'] ?? '';
     $etablissement = filter_var(trim($_POST['etablissement'] ?? ''),FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-    $cours = filter_var(trim($_POST['cours'] ?? ''),FILTER_SANITIZE_FULL_SPECIAL_CHARS); // s'assurer que cette variable est définie dans le formulaire
+    $cours = filter_var(trim($_POST['cours'] ?? ''),FILTER_SANITIZE_FULL_SPECIAL_CHARS); 
 
     if (
         $nom !== '' && $prenom !== '' && $username !== '' &&
@@ -370,7 +370,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <label for="signup-confirm-password" class="form-label">Confirmer le mot de passe</label>
     <input type="password" class="form-control" id="signup-confirm-password" name="signup_confirm_password" required>
   </div>
-  <p class="ms-2 position-relative" style="top:-1rem"><input type="checkbox" name="check"> se souvenir de moi</p>
+  <p class="ms-2 position-relative" style="top:-1rem"><input type="checkbox" name="check" required> se souvenir de moi</p>
   <button type="submit" class="btn  mx-auto fs-4 w-100">S'inscrire</button>
   <span class=" mt-5 position-relative" style="left:13rem">si vous n'avez deja un compte <a href="connexion.php">connexion</a></span>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

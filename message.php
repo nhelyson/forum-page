@@ -58,9 +58,11 @@ if (isset($_GET['id_post_comment']) && !empty($_GET['id_post_comment'])) {
             commentaire.users_commentaire,  
             commentaire.id_forum,
             commentaire.content,
-            commentaire.date_commentaire
+            commentaire.date_commentaire,
+            post.id_users
             FROM users
             JOIN commentaire ON users.id = commentaire.users_commentaire 
+            JOIN post ON post.id_forum =  commentaire.id_forum
             WHERE commentaire.id_forum = ?
             ORDER BY date_commentaire DESC
     ");
@@ -122,7 +124,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['vote']) && isset($_PO
 <body>
     <div class="d-flex">
         <div class="container">
-        <?php include 'navbar-left.php'; ?>
+        <nav class="navbar navbar-expand-lg navbar-white bg-white">
+        <div class="container">
+        <button class="btn btn-white mt-3 circle ms-2 border text-center" title="retourner a la page d'acceuil" id="return">
+       <svg xmlns="http://www.w3.org/2000/svg" class="position-relative" style="left: 50%!important;right: 50%!important; transform: translate(-50%,-30%)!important;" width="25px" height="25px" viewBox="0 0 24 24" fill="none">
+       <path d="M6 12H18M6 12L11 7M6 12L11 17" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+<div class="me-auto ms-3 p-2 mt-3 " style="border-left: 2px solid silver!important;">
+    post id 
+    <?php if(isset($_GET['id_post_comment']) && !empty($_GET['id_post_comment'])) : ?>
+    <?php 
+    $id = $_GET['id_post_comment'];
+    ?>
+    <span class="text-dark"><?php echo $id ?></span>
+    <?php endif ?>
+     </div>
+              </div>
+        </nav>
 
         <div class="row">
          <div class="col-lg-11 col-md-12 col-12 mt-5 mx-auto">
@@ -136,33 +155,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['vote']) && isset($_PO
              $titre_content = htmlspecialchars($post['titre_content']);
              $content = htmlspecialchars($post['content']);
              $date_post = $post['creation_post'];
-                        $date = new DateTime(  $date_post);
-                        $date_now =  new DateTime();
-                        $diff = $date_now->diff($date);
-                        $resultat = '';
-                        if ($diff->y > 0):
-                          $s = $diff->y > 1 ? 'ans' : 'an';
-                          $resultat = "il y a {$diff->y} $s";
-                      
-                      elseif ($diff->m > 0):
-                          $s = $diff->m > 1 ? 'mois' : 'mois'; 
-                          $resultat = "il y a {$diff->m} $s";
-                      
-                      elseif ($diff->d > 0):
-                          $s = $diff->d > 1 ? 'jours' : 'jour';
-                          $resultat = "il y a {$diff->d} $s";
-                      
-                      elseif ($diff->h > 0):
-                          $s = $diff->h > 1 ? 'heures' : 'heure';
-                          $resultat = htmlspecialchars("il y a {$diff->h} $s");
-                      
-                      elseif ($diff->i > 0):
-                          $s = $diff->i > 1 ? 'minutes' : 'minute';
-                          $resultat = "il y a {$diff->i} $s";
-                      
-                      else:
-                          $resultat = "il y a quelques secondes";
-                      endif;
+            $date = new DateTime(  $date_post);
+            if (!function_exists('ago')) {
+            function ago( $date) {
+                $date_form = strtotime( $date ->format('Y-m-d H:i:s'));
+                $diff  = time() - $date_form;
+       
+                                if ($diff < 1) {
+                                    return "à l'instant";
+                                }
+                        
+                                $sec = array(
+                                    31556926 => 'an',
+                                    "2629743.83" => 'mois', 
+                                    86400 => 'jour',
+                                    3600 => 'heure',
+                                    60 => 'minute',
+                                    1 => 'seconde'
+                                );
+                        
+                                foreach ($sec as $sec_value => $label) {
+                                    $div = $diff / $sec_value;
+                                    if ($div >= 1) {
+                                        $time_ago = round($div) . ' ' . $label;
+                                        return "il y a " . $time_ago;
+                                    }
+                                }
+                            }
+                        }
+                       
              ?>
         <div class="card bg-light border-0 position-relative">
             <div class="card-body">
@@ -179,9 +200,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['vote']) && isset($_PO
                       <img src="img-profile-defaut/defaut.jpg ?>" class="img" alt="defaut.jpg"></div>
                    <?php endif ?>
                     <p class="ms-3 name-users" style="font-size: 1.5rem!important;"><?php echo $username ?><span></span></p>
-                    <span class="ms-2 mt-2"><?php echo $resultat ?></span>
+                    <span class="ms-2 mt-2"><?php echo ago($date) ?></span>
                     </div>
-                    <h3 class="color_post mt-2"><?php echo htmlspecialchars_decode($titre_content) ?></h3>
+                    <h3 class="color_post mt-2 content_commentaire"><?php echo htmlspecialchars_decode($titre_content) ?></h3>
                     <p class="paragraphs_content fs-lg-5"><?php echo htmlspecialchars_decode($content) ?></p>
                     <?php if(isset($post['image_forum']) && !empty($post['image_forum']) && $post['image_forum'] !== null): ?>
                      <img src="img_post/<?php echo htmlspecialchars($image_forum )?>" class="img rounded-3 mt-3" alt="">
@@ -249,36 +270,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['vote']) && isset($_PO
                 $username = ($commentaire['username'] ?? '');
                 $genre = $commentaire['sexe'];
                 $id_forum = $commentaire['id_forum'];
-                $users_commentaire = $commentaire['users_commentaire'];
+                $id_users = (int)$commentaire['id_users'];
+                $users_commentaire = (int)$commentaire['users_commentaire'];
                 $content = $commentaire['content'];
                 $date_commentaire = $commentaire['date_commentaire'];
                 $date_comment = new DateTime(  $date_commentaire);
-                $date_now_comment =  new DateTime();
-                $diff =  $date_now_comment->diff( $date_comment );
-                $resultat = '';
-                if ($diff->y > 0):
-                  $s = $diff->y > 1 ? 'ans' : 'an';
-                  $resultat = "il y a {$diff->y} $s";
-              
-              elseif ($diff->m > 0):
-                  $s = $diff->m > 1 ? 'mois' : 'mois'; 
-                  $resultat = "il y a {$diff->m} $s";
-              
-              elseif ($diff->d > 0):
-                  $s = $diff->d > 1 ? 'jours' : 'jour';
-                  $resultat = "il y a {$diff->d} $s";
-              
-              elseif ($diff->h > 0):
-                  $s = $diff->h > 1 ? 'heures' : 'heure';
-                  $resultat = htmlspecialchars("il y a {$diff->h} $s");
-              
-              elseif ($diff->i > 0):
-                  $s = $diff->i > 1 ? 'minutes' : 'minute';
-                  $resultat = "il y a {$diff->i} $s";
-              
-              else:
-                  $resultat = "il y a quelques secondes";
-              endif;
+                if (!function_exists('ago')) {
+                    function ago( $date_comment ) {
+                        $date_form = strtotime( $date_comment ->format('Y-m-d H:i:s'));
+                        $diff  = time() - $date_form;
+                
+                        if ($diff < 1) {
+                            return "à l'instant";
+                        }
+                
+                        $sec = array(
+                            31556926 => 'an',
+                            "2629743.83" => 'mois', 
+                            86400 => 'jour',
+                            3600 => 'heure',
+                            60 => 'minute',
+                            1 => 'seconde'
+                        );
+                
+                        foreach ($sec as $sec_value => $label) {
+                            $div = $diff / $sec_value;
+                            if ($div >= 1) {
+                                $time_ago = round($div) . ' ' . $label;
+                                return "il y a " . $time_ago;
+                            }
+                        }
+                    }
+                }
+                
                 ?>
                 <div class="users-forum d-flex flex-row mt-5">
                     <div class="users-photo-forum" style="width:2.1rem !important;;height: 2rem !important;">
@@ -291,15 +315,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['vote']) && isset($_PO
                       <?php else: ?>
                       <img src="img-profile-defaut/defaut.jpg ?>" class="img" alt="defaut.jpg"></div>
                    <?php endif ?>
-                     <p class="ms-4 name-users mt-2"><?php echo $username ?></p>
-                     <span class="ms-2 mt-2"><?php echo $resultat ?></span>
+                     <p class="ms-4 name-users mt-2"><?php echo $username ?>
+                    </p>
+
                  </div>
+                               <?php
+       if (
+        isset(   $id_users) &&
+        isset( $users_commentaire) &&
+        $users_commentaire ===  $id_users
+      ) :
+      ?>
+    <span class="text-primary">Epingle par :</span>
+         <?php endif ?>
                  <p id="content-commentaire" class="fs-5" style="width:36rem;font-family: Asap !important"><?php echo htmlspecialchars_decode($content) ?></p>
-                 <button class="btn btn-transparent bouton-hover border-0 me-auto">
+                 <div class="d-flex">
+                     <span class="ms-2 mt-2"><?php echo ago( $date_comment ) ?></span>
+                      <button class="btn btn-transparent bouton-hover border-0 me-auto">
                     <span class="compte like-dark"></span>
                     <svg xmlns="http://www.w3.org/2000/svg" width="15px" height="15px" viewBox="0 0 24 24" fill="none">
                     <path d="M21.0039 12C21.0039 16.9706 16.9745 21 12.0039 21C9.9675 21 3.00463 21 3.00463 21C3.00463 21 4.56382 17.2561 3.93982 16.0008C3.34076 14.7956 3.00391 13.4372 3.00391 12C3.00391 7.02944 7.03334 3 12.0039 3C16.9745 3 21.0039 7.02944 21.0039 12Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg><span class=" ms-2" style="text-transform: capitalize;font-size: 0.8rem;">repondre</span></button>
+                 </div>
             <?php endforeach ?>
             <?php else : ?>
                 <div class="fs-5 mx-auto text-center border p-5 mt-5 rounded-3" style="height: 10rem;">Pas de commentaire pour cette publiaction</div>
@@ -312,5 +349,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['vote']) && isset($_PO
 </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="script.js"></script>
+     <script src="ajax.js"></script>
 </body>
 </html>

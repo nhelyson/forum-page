@@ -8,7 +8,6 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
   if(isset($user_post_supprime , $post_supprime) && $post_supprime !== ''){
     $supprime = $pdo->prepare("DELETE FROM post WHERE id_forum = ? AND id_users = ?");
     $supprime->execute([$post_supprime , $users_post_supprime]);
-    header("location: index.php?supprime = poste_supprime");
     exit();
   }
 }

@@ -88,8 +88,29 @@ let background_remove = document.getElementById('background-menu')
     background_remove.classList.remove('blur-background')
   })
  })
+ if(menu_remove.classList.contains('active')){
+ window.addEventListener("click" , function(){
+  menu.classList.remove('active');
+ })
+}
 
+let tabs_seconde = document.getElementById('tab-2')
+let input_see = document.querySelector('.input-search')
 
+tabs_seconde.addEventListener('click' , function(){
+  input_see.disabled = true;
+  input_see.style.cursor = "not-allowed";
+  title.textContent = "manga page"
+})
+
+let tabs_first = document.getElementById('tab-1')
+let input_see_remove = document.querySelector('.input-search')
+let title = document.getElementById('color')
+tabs_first.addEventListener("click" , function(){
+  input_see_remove.disabled = false
+  input_see.style.cursor = "pointer"
+  title.textContent = "I see you"
+})
 
 if( document.getElementById('welcome-popup')){
   function modifierURLSucces() {
@@ -137,11 +158,12 @@ window.onload = function() {
 if(document.getElementById('upload')){
   let previousImageSrc = null;
   let previewback = null;
+   const image = document.getElementById("imagePreview")
   function previewImage(event) {
       const imagePreview = document.getElementById("imagePreview");
       const backImage = document.getElementById("back-image");
-        previousImageSrc = imagePreview.src;
-        previewback = backImage.src
+        previousImageSrc = image.src;
+        previewback = image.src
          if(event.target.files[0].length !== null || event.target.files[0].length !== undefined ){
          let src = URL.createObjectURL(event.target.files[0]);
          imagePreview.src = src;
@@ -276,3 +298,4 @@ if(document.getElementById('error_email')){
       }
   })
 }
+

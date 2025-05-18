@@ -1,6 +1,7 @@
 <?php
 include 'session.php';
 include 'connexion-db.php';
+include 'search.php';
 if(isset($_SESSION['user'])  && !empty($_SESSION['user'])){
     $userId =htmlspecialchars($_SESSION['user']['id']);
     $nom = htmlspecialchars($_SESSION['user']['nom']);
@@ -252,33 +253,36 @@ if(isset($_SESSION['user']) && !empty($_SESSION['user'])){
                         $content = htmlspecialchars($post['content']);
                         $categories = htmlspecialchars($post['categories']);
                         $date_post = $post['creation_post'];
-                        $date = new DateTime(  $date_post);
-                        $now =  new DateTime();
-                        $resultat = '';
-                        if ($date_post > $now) {
-                          $resultat = "dans le futur"; 
-                      } else {
-                          $diff = $now->diff($date);
-                      
-                          if ($diff->y > 0) {
-                              $s = $diff->y > 1 ? 'ans' : 'an';
-                              $resultat = "il y a {$diff->y} $s";
-                          } elseif ($diff->m > 0) {
-                              $resultat = "il y a {$diff->m} mois";
-                          } elseif ($diff->d > 0) {
-                              $s = $diff->d > 1 ? 'jours' : 'jour';
-                              $resultat = "il y a {$diff->d} $s";
-                          } elseif ($diff->h > 0) {
-                              $s = $diff->h > 1 ? 'heures' : 'heure';
-                              $resultat = "il y a {$diff->h} $s";
-                          } elseif ($diff->i > 0) {
-                              $s = $diff->i > 1 ? 'minutes' : 'minute';
-                              $resultat = "il y a {$diff->i} $s";
-                          } else {
-                              $resultat = "il y a quelques secondes";
-                          }
-                      }
-                      
+                        $date = new DateTime($date_post);
+                        if (!function_exists('ago')) {
+                            function ago($date) {
+                                $date_form = strtotime($date->format('Y-m-d H:i:s'));
+                                $diff  = time() - $date_form;
+                        
+                                if ($diff < 1) {
+                                    return "à l'instant";
+                                }
+                        
+                                $sec = array(
+                                    31556926 => 'an',
+                                    "2629743.83" => 'mois',
+                                    86400 => 'jour',
+                                    3600 => 'heure',
+                                    60 => 'minute',
+                                    1 => 'seconde'
+                                );
+                        
+                                foreach ($sec as $sec_value => $label) {
+                                    $div = $diff / $sec_value;
+                                    if ($div >= 1) {
+                                        $time_ago = round($div) . ' ' . $label;
+                                        return "il y a " . $time_ago;
+                                    }
+                                }
+                            }
+                        }
+                        
+                        
                         ?>
                         
                          <div class="card border-0">
@@ -297,7 +301,7 @@ if(isset($_SESSION['user']) && !empty($_SESSION['user'])){
                                          <?php endif ?>
                                          </div>
                                         <p class="ms-3 name-users" style="font-family: Asap !important;"><?php echo $username ?></p>
-                                        <span class="ms-2" style="color: #5d5d6c!important;"><?php echo  $resultat ?></span>
+                                        <span class="ms-2" style="color: #5d5d6c!important;"><?php echo ago($date) ?></span>
                                         <?php if($id_users_post) : ?>
                                         <?php if( $id_users_post === $_SESSION['user']['id']): ?>
                                         <button type="bouton" class="btn btn-primary ms-auto mb-4 text-center" style="height:30px;font-size:0.8rem;">supprrime</button>
@@ -307,7 +311,7 @@ if(isset($_SESSION['user']) && !empty($_SESSION['user'])){
                                     </div>
                                     <div class="mt-3">
                                     <h5 class="color_post" style="font-family: Asap !important;font-weight:900"><?php echo htmlspecialchars_decode($titre_content) ?></h5>
-                                    <p class="paragraphs_content" style="font-family: Asap !important;"><?php echo htmlspecialchars_decode ($content) ?></p>
+                                    <p class="paragraphs_content" style="font-family: Asap !important;" title="<?php  $titre_content?>"><?php echo htmlspecialchars_decode ($content) ?></p>
                                     </div>
                                     <?php if(isset($post['image_forum']) && !empty($post['image_forum']) && $post['image_forum'] !== null): ?>
                                     <img src="img_post/<?php echo htmlspecialchars($image_forum )?>" class="img rounded-3" alt="">
@@ -380,7 +384,7 @@ if(isset($_SESSION['user']) && !empty($_SESSION['user'])){
                             <?php endif; ?>
                       </div>
                       </div>
-                    <div class="col-4 btn-none  bg-light rounded-3 ms-2 position-sticky top-0 bottom-0">
+                    <div class="col-4 btn-none  bg-light rounded-3 ms-2 position-sticky top-0 left-0">
                         <p class="text-center fs-5 mt-2">Commentaires Recents</p>
                         <?php if(!empty($commentaire_user)): ?>
                         <?php foreach($commentaire_user as $comentaire_all): ?>
@@ -393,7 +397,7 @@ if(isset($_SESSION['user']) && !empty($_SESSION['user'])){
                         $date_commentaire = $comentaire_all['date_commentaire'];
                         ?>
                         <div class="ranked-coment p-4">
-                            <div class="ranked-item bg-white rounded-4">
+                            <div class="ranked-item bg-white mode rounded-4">
                                 <div class="users-forum d-flex flex-row">
                                     <div class="users-photo-forum" style="width:2.1rem !important;;height: 2rem !important;">
                                         <?php if(isset($img_profile) && !empty($img_profile)) : ?>
@@ -411,7 +415,7 @@ if(isset($_SESSION['user']) && !empty($_SESSION['user'])){
                                 </div>
                                 <p class="mt-3 ms-4 w-80" style="font-family: Asap !important;"><?php echo $content ?></p>
                                 <div class="mt-3 ms-4">
-                                <h7 style="font-weight:900;font-family: Asap!important;background-image:linear-gradient(to right, rgba(240, 227, 54, 1), rgba(146, 194, 254, 1));color:transparent; background-clip:text;">titre discussions</h7>
+                                <h7 class="anime">titre discussions</h7>
                                 <p style="font-size: 1rem!important;"><?php echo $titre_content ?></p>
                                 </div>
                             </div>
@@ -424,9 +428,18 @@ if(isset($_SESSION['user']) && !empty($_SESSION['user'])){
                     </div>
                 </div>
              </div>
-            <div id="forums" class="page p-5" style="display: none;">
-                <h1>live</h1>
-                <p>Contenu des forums...</p>
+            <div id="forums" class="page p-5 mt-5" style="display: none;">
+                <h2 class="text-center">Recherchez votre manga prefere</h2>
+                <div class="d-flex flex-row gap-3 mt-5">
+                <input type="search" class="form-control" id="manga-search" placeholder="Recherche vos manga prefere...." style="height: 3rem!important;">
+                <button class="btn btn-primary" style="width: 10rem!important;">upload</button>
+                </div>
+                <div class="content-manga mt-5">
+                 <div class="content-item rounded-3"><img src="Photo_6235.jpg" alt=""></div>
+                 <div class="content-item rounded-3"><img src="8343.jpg" alt=""></div>
+                 <div class="content-item rounded-3"><img src="ciel bleu.jpg" alt=""></div>
+                 <div class="content-item rounded-3"><img src="ciel bleu.jpg" alt=""></div>
+                </div>
             </div>
             <div id="meetings" class="page" style="display: none;">
                 <h1>Meetings</h1>

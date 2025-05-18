@@ -29,6 +29,7 @@ if(isset($_SESSION['user'] , $_GET['id']) && !empty($_SESSION['user']['id']) && 
                                ");
   $post_user->execute([ $id_users_post]);
   $post_result = $post_user->fetchAll(PDO::FETCH_ASSOC);
+
 }
 ?>
 <!DOCTYPE html>
@@ -39,12 +40,28 @@ if(isset($_SESSION['user'] , $_GET['id']) && !empty($_SESSION['user']['id']) && 
     <title></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Asap&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Asap&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<nav class="bg-primary navbar-primary">
+<nav class="navbar navbar-expand-lg navbar-white bg-white">
     <div class="container">
-        <a href="" class="navbar-brand  fs-1 ms-3">I see you</a>
+        <button class="btn btn-white circle border text-center" id="return">
+<svg xmlns="http://www.w3.org/2000/svg" class="position-relative" style="left: 50%!important;right: 50%!important; transform: translate(-50%,-30%)!important;" width="25px" height="25px" viewBox="0 0 24 24" fill="none">
+<path d="M6 12H18M6 12L11 7M6 12L11 17" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+</button>
+
+<div class="me-auto ms-3 p-2" style="border-left: 2px solid silver!important;">
+    compte id 
+    <?php if(isset($_GET['id']) && !empty($_GET['id'])) : ?>
+    <?php 
+    $id = $_GET['id'];
+    ?>
+    <span class="text-dark"><?php echo $id ?></span>
+    <?php endif ?>
+</div>
+        <a href="" class="navbar-brand px-3 fs-1 border rounded-3 " style="font-family: 'Asap'!important;font-weight:700!important">Profile</a>
         </div>
     </nav>
  <div class="container mt-5">
@@ -173,6 +190,35 @@ if(isset($_SESSION['user'] , $_GET['id']) && !empty($_SESSION['user']['id']) && 
                         $titre_content = $post['titre_content'];
                         $content = htmlspecialchars($post['content']);
                         $categories = htmlspecialchars($post['categories']);
+                        $date_post = $post['creation_post'];
+                        $date = new DateTime($date_post);
+                        if (!function_exists('ago')) {
+                            function ago($date) {
+                                $date_form = strtotime($date->format('Y-m-d H:i:s'));
+                                $diff  = time() - $date_form;
+                        
+                                if ($diff < 1) {
+                                    return "à l'instant";
+                                }
+                        
+                                $sec = array(
+                                    31556926 => 'an',
+                                    "2629743.83" => 'mois',
+                                    86400 => 'jour',
+                                    3600 => 'heure',
+                                    60 => 'minute',
+                                    1 => 'seconde'
+                                );
+                        
+                                foreach ($sec as $sec_value => $label) {
+                                    $div = $diff / $sec_value;
+                                    if ($div >= 1) {
+                                        $time_ago = round($div) . ' ' . $label;
+                                        return "il y a " . $time_ago;
+                                    }
+                                }
+                            }
+                        }
                         ?>
                          <div class="card border-0 position-relative mt-5" style="top: 10rem!important;">
                             <div class="card-body">
@@ -190,7 +236,7 @@ if(isset($_SESSION['user'] , $_GET['id']) && !empty($_SESSION['user']['id']) && 
                                          <?php endif ?>
                                          </div>
                                         <p class="ms-3 name-users" style="font-family: Asap !important;"><?php echo $username ?></p>
-                                        <span class="text-danger ms-2">minute</span>
+                                        <span class="ms-2" style="color: #5d5d6c!important;"><?php echo ago($date) ?></span>
                                         <?php if($id_users_post) : ?>
                                         <?php if( $id_users_post === $_SESSION['user']['id']): ?>
                                         <button type="bouton" class="btn btn-primary ms-auto mb-4 text-center" style="height:30px;font-size:0.8rem;">supprrime</button>
@@ -200,7 +246,7 @@ if(isset($_SESSION['user'] , $_GET['id']) && !empty($_SESSION['user']['id']) && 
                                     </div>
                                     <div class="mt-3">
                                     <h5 class="color_post" style="font-family: Asap !important;font-weight:900"><?php echo htmlspecialchars_decode($titre_content) ?></h5>
-                                    <p class="paragraphs_content" style="font-family: Asap !important;"><?php echo htmlspecialchars_decode ($content) ?></p>
+                                    <p class="paragraphs_content_profile" style="font-family: Asap !important;"><?php echo htmlspecialchars_decode ($content) ?></p>
                                     </div>
                                     <?php if(isset($post['image_forum']) && !empty($post['image_forum']) && $post['image_forum'] !== null): ?>
                                     <img src="img_post/<?php echo htmlspecialchars($image_forum )?>" class="img rounded-3" alt="">
@@ -273,6 +319,7 @@ if(isset($_SESSION['user'] , $_GET['id']) && !empty($_SESSION['user']['id']) && 
                             <?php endif; ?>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="script.js"></script>
+<script src="script.js" defer></script>
+<script src="ajax.js"></script>
 </body>
 </html>
