@@ -13,6 +13,7 @@ if(isset($_SESSION['user'])  && !empty($_SESSION['user'])){
     $cours = htmlspecialchars($_SESSION['user']['cours']);
     $pays = htmlspecialchars($_SESSION['user']['pays']);
     $date = htmlspecialchars($_SESSION['user']['date_enregistrement']);
+    $role = htmlspecialchars($_SESSION['user']['role']);
 
      $timestamp = strtotime($date);
 
@@ -213,7 +214,7 @@ if(isset($_SESSION['user']) && !empty($_SESSION['user'])){
               </div>
             </div>
             <div class="position-absolute bottom-0  p-2  text-white">
-              <p class=""><?php echo $nom; ?> fait partie de Student Hub</p>
+              <p class=""><?php echo $nom; ?> fait partie de i see you</p>
               <a href="profile.php?id=<?php echo $id_users; ?>" class="btn btn-sm btn-outline-light">Voir profil</a>
              </div>
             </div>
@@ -449,6 +450,22 @@ if(isset($_SESSION['user']) && !empty($_SESSION['user'])){
                 <h1>Community</h1>
                 <p>Contenu de la communauté...</p>
             </div>
+            <?php  
+            if (
+            isset($_SESSION['user']) && 
+            !empty($_SESSION['user']) && 
+           (
+           $_SESSION['user']['role'] === 'admin' || 
+           $_SESSION['user']['role'] === 'super-admin'
+           )
+           ) : 
+            ?>
+            <div id="admin" class="page p-5" style="display: none;">
+           <h1>admin interface</h1>
+          <p>Contenu de la communauté...</p>
+          </div>
+          <?php endif; ?>
+
             <div id="message" class="page p-5" style="display: none;">
             </div>
             <div id="compte" class="page p-5" style="display: none;">

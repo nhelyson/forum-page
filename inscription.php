@@ -59,6 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'nom' => $user['nom'],
                 'prenom' => $user['prenom'],
                 'username' => $user['username'],
+                'role' => $user['role'],
                 'email' => $user['email'],
                 'genre' => $user['sexe'],            
                 'etablissement' => $user['etablissement'],

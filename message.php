@@ -315,19 +315,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['vote']) && isset($_PO
                       <?php else: ?>
                       <img src="img-profile-defaut/defaut.jpg ?>" class="img" alt="defaut.jpg"></div>
                    <?php endif ?>
-                     <p class="ms-4 name-users mt-2"><?php echo $username ?>
-                    </p>
-
-                 </div>
-                               <?php
+                    
+                        <?php
        if (
         isset(   $id_users) &&
         isset( $users_commentaire) &&
         $users_commentaire ===  $id_users
       ) :
       ?>
-    <span class="text-primary">Epingle par :</span>
+    <p class="ms-4 name-users mt-2 bg-light"><?php echo $username ?></span>
+    <?php else : ?>
+        <p class="ms-4 name-users mt-2"><?php echo $username ?>
          <?php endif ?>
+                    </p>
+
+                 </div>
+
                  <p id="content-commentaire" class="fs-5" style="width:36rem;font-family: Asap !important"><?php echo htmlspecialchars_decode($content) ?></p>
                  <div class="d-flex">
                      <span class="ms-2 mt-2"><?php echo ago( $date_comment ) ?></span>
