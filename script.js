@@ -77,7 +77,7 @@ if (boutondark) {
 }
 
 // desactivation du menu verticale gauche si l'utilisateur clique sur un onglet sur mobile
-
+if(document.getElementById('menu-right')){
 let nav_links = document.querySelectorAll('.nav-links');
 let menu_remove = document.getElementById('menu-right');
 let background_remove = document.getElementById('background-menu')
@@ -93,7 +93,9 @@ let background_remove = document.getElementById('background-menu')
   menu.classList.remove('active');
  })
 }
+}
 
+if(document.querySelector('.input-search')){
 let tabs_seconde = document.getElementById('tab-2')
 let input_see = document.querySelector('.input-search')
 
@@ -102,7 +104,9 @@ tabs_seconde.addEventListener('click' , function(){
   input_see.style.cursor = "not-allowed";
   title.textContent = "manga page"
 })
+}
 
+if(document.querySelector('.input-search')){
 let tabs_first = document.getElementById('tab-1')
 let input_see_remove = document.querySelector('.input-search')
 let title = document.getElementById('color')
@@ -111,6 +115,7 @@ tabs_first.addEventListener("click" , function(){
   input_see.style.cursor = "pointer"
   title.textContent = "I see you"
 })
+}
 
 if( document.getElementById('welcome-popup')){
   function modifierURLSucces() {
@@ -299,3 +304,58 @@ if(document.getElementById('error_email')){
   })
 }
 
+//javascript page.php
+if (document.getElementById("navbar_page")) {
+  const navbar_toggle = document.getElementById("navbar_page");
+  const div = document.getElementById("menu-page")
+  const bouton_close =  document.createElement('button')
+  bouton_close.className = "btn btn-transparent  border-0 position-relative"
+  bouton_close.innerHTML= `<span>
+  <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" viewBox="0 0 16 16">
+    <path d="M4.646 4.646a.5.5 0 011 0L8 6.293l2.354-2.647a.5.5 0 11.707.707L8.707 7l2.647 2.354a.5.5 0 01-.707.707L8 7.707l-2.354 2.647a.5.5 0 11-.707-.707L7.293 7 4.646 4.646a.5.5 0 010-.707z"/>
+  </svg></span>`
+  const element = document.createElement('ul')
+  element.style.height = "100%"
+  element.className = "nav d-flex flex-column mt-5 gap-5"
+   function li_mode(text, href) {
+    const li = document.createElement("li");
+    li.className = "nav-item";
+
+    const a = document.createElement("a");
+    a.className = "nav-link";
+    a.href = href;
+    a.style.fontSize = "1.2rem"
+    a.style.textAlign = "center"
+    a.textContent = text;
+
+    li.appendChild(a);
+    element.appendChild(li);
+  }
+  
+  li_mode('Acceuil' , "#" ,)
+  li_mode('Equipe' , "#" ,)
+  li_mode('A propos de nous' , "#")
+  li_mode('contactez nous' , "#")
+  div.appendChild(bouton_close)
+  div.appendChild(element)
+  div.className = "menu_page border";
+  div.style.transition = 'all 0.4s ease-in'
+  navbar_toggle.addEventListener("click", function () {
+    div.classList.toggle("active_page");
+  });
+   bouton_close.addEventListener('click', function() {
+    div.classList.remove("active_page");
+  })
+
+  window.addEventListener("click", function(event) {
+  if (
+    div.classList.contains("active_page") &&
+    !div.contains(event.target) &&
+    !navbar_toggle.contains(event.target)
+  ) {
+    div.classList.remove("active_page");
+  }
+});
+
+  
+}

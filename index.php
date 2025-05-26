@@ -59,7 +59,7 @@ if(isset($_SESSION['user'])  && !empty($_SESSION['user'])){
         exit;
     }
     if (!isset($_SESSION['user'])) {
-        header("Location: connexion.php");
+        header("Location: page.php");
         exit;
     }
 }
@@ -450,21 +450,6 @@ if(isset($_SESSION['user']) && !empty($_SESSION['user'])){
                 <h1>Community</h1>
                 <p>Contenu de la communauté...</p>
             </div>
-            <?php  
-            if (
-            isset($_SESSION['user']) && 
-            !empty($_SESSION['user']) && 
-           (
-           $_SESSION['user']['role'] === 'admin' || 
-           $_SESSION['user']['role'] === 'super-admin'
-           )
-           ) : 
-            ?>
-            <div id="admin" class="page p-5" style="display: none;">
-           <h1>admin interface</h1>
-          <p>Contenu de la communauté...</p>
-          </div>
-          <?php endif; ?>
 
             <div id="message" class="page p-5" style="display: none;">
             </div>

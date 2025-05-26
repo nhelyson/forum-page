@@ -392,6 +392,16 @@ z-index:91000!important;
     height:30px!important;
     border-radius: 50%!important;
 }
+
+ .menu_page{
+      position: fixed;
+      left:-360px;
+      width: 360px;
+      height: 100%;
+      background-color: var(--primary-color);
+      z-index: 8000;
+    }
+    
 @keyframes texte {
   from{
     background-position: 100rem!important;
@@ -407,6 +417,10 @@ z-index:91000!important;
     .menu.active {
        left:0;
        transition: all 0.6s ease;
+    }
+  
+    .menu_page.active_page{
+      left:0;
     }
     .blur-background{
       position: fixed;
@@ -438,10 +452,30 @@ z-index:91000!important;
       color: black!important;
       border: none!important;
     }
+    .tr_page{
+      display: none!important;
+    }
+}
+.hover-stack:hover{
+ box-shadow:  6px 6px 0 black!important;
+ color: var(--primary-color)!important;
 }
 
 /* disparition du champ  de recherche droite remplacer par un button*/
 @media only screen  and (max-width:786px) {
+  .bouton_close{
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+  }
+  .center{
+      position: relative;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%,-50%);
+      width: 50%!important;
+    }
+
   .content-manga{
     column-count: 2;
   }
@@ -456,7 +490,7 @@ z-index:91000!important;
         width: 400px;
     }
     .btn-none{
-      display: none;
+      display: none!important;
     }
     .none{
         display: block;

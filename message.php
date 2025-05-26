@@ -323,7 +323,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['vote']) && isset($_PO
         $users_commentaire ===  $id_users
       ) :
       ?>
-    <p class="ms-4 name-users mt-2 bg-light"><?php echo $username ?></span>
+    <p class="ms-4 name-users mt-2 rounded-3 text-white p-1" style="background-color: rgba(93, 93, 108, 1)!important;text-transform:capitalize"><?php echo $username ?></span>
     <?php else : ?>
         <p class="ms-4 name-users mt-2"><?php echo $username ?>
          <?php endif ?>

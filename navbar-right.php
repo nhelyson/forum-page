@@ -14,7 +14,7 @@
             </a>
             <ul class="nav flex-column justify-content-center mt-5 border-bottom">
                 <li class="nav-item">
-                    <a class="nav-link nav-links d-flex align-items-center bg-warning border-left active-menu" href="index.php#meetings" data-page="home" id="tab-1">
+                    <a class="nav-link nav-links d-flex align-items-center bg-warning border-left active-menu" href="#" data-page="home" id="tab-1">
                         <i class="bi bi-house-door me-2 "></i> Accueil
                     </a>
                 </li>
@@ -40,7 +40,7 @@
            $_SESSION['user']['role'] ==='super-admin') ) {
             echo "
             <ul>
-                <li class='nav-item'><a href='#' class='nav-link nav-links' data-page='admin' id='tab-5'>admin interface</a></li>
+                <li class='nav-item nav-select d-flex align-items-center'><a href='admin.php' class='nav-link' data-page='admin' id='tab-5'>admin interface</a></li>
             </ul>
             ";
    

@@ -73,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (isset($_POST['remember'])) {
                 setcookie('user_id', $user['id'], time() + (86400 * 30), "/"); 
             }
-             
+            
             header("Location: index.php?success=1&type=inscription&username=" . urlencode($user['username']));
             exit;
 

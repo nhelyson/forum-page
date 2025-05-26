@@ -1,27 +1,4 @@
-let sauvegarde = null;          // sera remplie la 1re fois, puis conservée
 
-  function nom(prenom) {
-    const input = document.getElementById('color');
-
-    // on mémorise la valeur de départ une seule fois
-    if (sauvegarde === null) {
-      sauvegarde = input.value;
-    }
-
-    // on alterne
-    if (input.value === prenom) {
-      input.value = sauvegarde;   // on remet la valeur d’origine
-    } else {
-      input.value = prenom;       // on met le prénom
-    }
-  }
-
-  // appel toutes les 3 s
-  const id = setInterval(nom, 3000, "japhet");
-
-  // (facultatif) arrêter après 30 s
-  // setTimeout(() => clearInterval(id), 30000);
-  
 const search = async (event) => {
   let input_search = event.target.value;
   
