@@ -64,27 +64,6 @@ if(isset($_SESSION['user'])  && !empty($_SESSION['user'])){
     }
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $describe = filter_var(trim($_POST['discribe'] ?? ''), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-
-    if ($describe !== '') {
-        $stmt = $pdo->prepare("UPDATE users SET description = ? WHERE id = ?");
-        $stmt->execute([$describe, $_SESSION['user']['id']]);
-    }
-}
-
-$describe_stocker = '';
-$describe_content = '';
-
-$stmt = $pdo->prepare("SELECT description FROM users WHERE id = ?");
-$stmt->execute([$_SESSION['user']['id']]);
-$describe_stocker = $stmt->fetchColumn();
-
-if (is_string($describe_stocker) && trim($describe_stocker) !== '') {
-    $describe_content = htmlspecialchars_decode($describe_stocker);
-}else{
-    $describe_content = 'Cette bio est en vacances... revenez plus tard ! 🏖️';
-}
 // Récupérer les posts de tous les utlisateurs
 $sql_requete = $pdo->prepare(
 "SELECT users.id,
@@ -321,26 +300,14 @@ if(isset($_SESSION['user']) && !empty($_SESSION['user'])){
                                     <?php endif ?>
                                     </div>
                                     <div class="card-footer bg-transparent d-flex flex-row gap-2 border-0 position-relative" style="left:-1.2rem">  
-                                   <form method="POST" action="vote.php">
-                                     <input type="hidden" name="id_post" value="<?php echo $id_forum ?>">
-                                     <input type="hidden" name="vote" value="1">
-                                        <button type="submit" class="btn btn-white rounded-2 enjoy">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 24 24" fill="none">
+                                    <button type="bouton"  id="like" class="btn btn-white rounded-2 enjoy" data-id="<?php echo $id_forum ?>" data-value="1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 24 24" fill="none">
                                             <path d="M8 10V20M8 10L4 9.99998V20L8 20M8 10L13.1956 3.93847C13.6886 3.3633 14.4642 3.11604 15.1992 3.29977L15.2467 3.31166C16.5885 3.64711 17.1929 5.21057 16.4258 6.36135L14 9.99998H18.5604C19.8225 9.99998 20.7691 11.1546 20.5216 12.3922L19.3216 18.3922C19.1346 19.3271 18.3138 20 17.3604 20L8 20" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                                             </svg>
-                                      <?php
-                                     $stmt = $pdo->prepare("SELECT COUNT(vote_like) FROM likes WHERE post_id = ?");
-                                     $stmt->execute([$id_forum]);
-                                     $like_count = (int) $stmt->fetchColumn();
-                                     ?>
                                            
-                                    <span class="compte like-dark" style="font-weight: 700;"><?php echo $like_count; ?></span>
+                                    <span class="compte like-dark" id="response_like" style="font-weight: 700;"></span>
                                     </button>
-                                    </form>
-                                   <form method="POST" action="vote.php">
-                                    <input type="hidden" name="id_post" value="<?php echo $id_forum ?>">
-                                    <input type="hidden" name="vote" value="-1">
-                                   <button type="submit" class="btn btn-white enjoy">
+                                   <button type="bouton" id="dislike" class="btn btn-white enjoy" data-id="<?php echo $id_forum ?>" data-value="-1">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 24 24" fill="none" transform="matrix(1, 0, 0, -1, 0, 0)">
                 
                                             <g id="SVGRepo_bgCarrier" stroke-width="0"/>
@@ -351,13 +318,8 @@ if(isset($_SESSION['user']) && !empty($_SESSION['user'])){
                                             
                                             </svg>
                                             </svg>
-                                      <?php
-                                     $stmt = $pdo->prepare("SELECT COUNT(vote_dislike) FROM dislike WHERE post_id = ?");
-                                     $stmt->execute([$id_forum]);
-                                     $like_count_dislke = (int) $stmt->fetchColumn();
-                                     ?>
                                            
-                                    <span class="compte like-dark" style="font-weight: 700;"><?php echo $like_count_dislke; ?></span>
+                                    <span class="compte like-dark" id="response_dislike" style="font-weight: 700;"></span>
                                     </button>
                                     </form>
                                     <a href="message.php?id_post_comment=<?php echo $id_forum ?>">
@@ -480,7 +442,7 @@ if(isset($_SESSION['user']) && !empty($_SESSION['user'])){
                     </div>
                 <div class="row  row-cols-1 align-items-start">
                 <div class="col">
-                <div class="positon-relative">
+                <div class="positon-relative" id="profile_picture">
                 <?php if (isset($_SESSION['user']['img_profile'])): ?>
                <img src="img_profile/<?= htmlspecialchars($_SESSION['user']['img_profile']) ?>?v=<?= time() ?>" 
                 class="profile-img mx-auto position-relative" 
@@ -528,8 +490,15 @@ if(isset($_SESSION['user']) && !empty($_SESSION['user'])){
                 <h4 class="name-users" style="font-family: 'Asap', sans-serif!important;"><?php echo $nom ?> <span><?php echo  $prenom?></span></h4>
                 <p class="position-relative" style="top:-0.3rem;"><?php echo $email ?></p>
                 </div>
-                <div>      
-                <p class="text-dark query mt-5" style="font-size: 0.8rem;width:18rem;font-family: 'Asap', sans-serif!important;"><?php  echo $describe_content ?></p>
+                <div>    
+                <?php
+                if (isset($_SESSION['user']['description']) && !empty($_SESSION['user']['description'])) {
+                    $description = htmlspecialchars($_SESSION['user']['description']);
+                }
+                ?>  
+                 <div class="reponse_contain">
+                    <p class="text-dark query mt-5" id="response _content" style="font-size: 0.8rem;width:18rem;font-family: 'Asap', sans-serif!important;"><?php echo htmlspecialchars_decode($description) ?></p>
+                 </div>
                     <button class="btn btn-transparent border-0" id="describe-pop-visible"><i class="fas fa-pen" style="color:black"></i></button>
                     <div class="pop-upload-describe"id="pop-upload-describe" style="display: none;">
                     <div class=" d-flex flex-column justify-content-center align-items-center content-describe bg-white" style="width:37rem!important;height:30rem;">
@@ -631,5 +600,6 @@ if(isset($_SESSION['user']) && !empty($_SESSION['user'])){
            </script>
              <script src="script.js"></script>
              <script src="form.js"></script>
+             <script src="ajax.js"></script>
          </body>
          </html>

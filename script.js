@@ -148,9 +148,7 @@ window.onload = function() {
     const  bouton_pop = document.createElement('button')
     let bouton_pop_2 = document.createElement('button')
     bouton_pop_2.textContent = "Fermer";
-    bouton_pop_2.addEventListener('click', function(){
-      closePopup()
-    })
+    bouton_pop_2.addEventListener('click',   closePopup)
     let reserve = document.querySelector('.reserve')
     bouton_pop_2.textContent = "Fermer";
     text_change.textContent = "Tu t'es souvenu de moi ? c'est sympa,";
@@ -163,7 +161,7 @@ window.onload = function() {
 if(document.getElementById('upload')){
   let previousImageSrc = null;
   let previewback = null;
-   const image = document.getElementById("imagePreview")
+  const image = document.getElementById("imagePreview")
   function previewImage(event) {
       const imagePreview = document.getElementById("imagePreview");
       const backImage = document.getElementById("back-image");
@@ -180,8 +178,6 @@ if(document.getElementById('upload')){
     }
 
   function closeupload(){
-          document.getElementById("imagePreview").src = previewback;
-          document.getElementById("back-image").src = previewback;
           pop_profile.style.display = 'none'
 }
 

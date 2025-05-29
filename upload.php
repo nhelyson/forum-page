@@ -1,6 +1,7 @@
 <?php
 include 'connexion-db.php';
 include 'session.php';
+header('Content-Type: application/json');
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!isset($_FILES['profile']['tmp_name']) && !isset($_SESSION['user']['id'])) {
         $response['message'] = 'Fichier ou session manquant';
@@ -24,9 +25,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $pdo->prepare("UPDATE users SET img_profile = ? WHERE id = ?");
         $stmt->execute([$new_name, $id]);
 
-        $_SESSION['user']['img_profile'] = $new_name; 
+        $_SESSION['user']['img_profile'] = $new_name;
 
-        header('location: index.php?img_profilesuccess=uploaded');
+         echo json_encode([
+            'succes' => true,
+            'img_profile' => $_SESSION['user']['img_profile'],
+         ]);
+
     } else {
         $response['message'] = 'Échec du déplacement du fichier.';
         echo json_encode($response);
